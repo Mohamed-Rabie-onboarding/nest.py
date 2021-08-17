@@ -1,2 +1,2 @@
 serve:
-	poetry run python3.9 example.py
+	poetry run python3.9 main.py

@@ -1,33 +1,21 @@
-from typing import List
 from nest.scripts import Types
 
 
-def NestModule(config: dict = None):
+def NestModule(prefix: str = None, modules: list = None, providers: list = None, controllers: list = None):
     def _nestModule(Ctor):
-        modules = []
-        providers = []
-        controllers = []
-
-        if config is dict:
-            modules = config.modules if config.modules is List else modules
-            providers = config.providers if config.providers is List else providers
-            controllers = config.controllers if config.controllers is List else controllers
-
-        class NEST_MODULE(Ctor):
-            pass
 
         setattr(
-            NEST_MODULE,
+            Ctor,
             Types.meta,
             dict(
                 type=Types.module,
-                module=Ctor,
-                modules=modules,
-                providers=providers,
-                controllers=controllers
+                prefix=prefix if type(prefix) is str else '',
+                modules=modules if type(modules) is list else [],
+                providers=providers if type(providers) is list else [],
+                controllers=controllers if type(controllers) is list else []
             )
         )
 
-        return NEST_MODULE
+        return Ctor
 
     return _nestModule

@@ -1,32 +1,18 @@
 from nest.scripts import Types
-from typing import Union
 
 
-def Controller(config: Union[str, dict] = None):
+def Controller(prefix: str = None, injects: list = None):
     def _controller(Ctor):
-        prefix = ''
-        injects = []
-
-        if config is str:
-            prefix = config
-        elif config is dict:
-            prefix = config.uri if config.uri is not None else prefix
-            injects = config.injects if config.injects is not None else injects
-
-        class NEST_Controller(Ctor):
-            pass
 
         setattr(
-            NEST_Controller,
+            Ctor,
             Types.meta,
             dict(
                 type=Types.controller,
-                prefix=prefix,
-                controller=Ctor,
-                injects=injects,
-                routes=[]
+                prefix=prefix if type(prefix) is str else '',
+                injects=injects if type(injects) is list else [],
             )
         )
 
-        return NEST_Controller
+        return Ctor
     return _controller

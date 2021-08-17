@@ -1,25 +1,17 @@
 from nest.scripts import Types
 
 
-def Injectable(config: dict = None):
+def Injectable(injects: list = None):
     def _injectable(Ctor):
-        injects = []
-
-        if config is dict:
-            injects = config.injects if config.injects is not None else injects
-
-        class NEST_Injectable(Ctor):
-            pass
 
         setattr(
-            NEST_Injectable,
+            Ctor,
             Types.meta,
             dict(
                 type=Types.injectable,
-                injectable=Ctor,
-                injects=injects
+                injects=injects if type(injects) is list else []
             )
         )
 
-        return NEST_Injectable
+        return Ctor
     return _injectable
