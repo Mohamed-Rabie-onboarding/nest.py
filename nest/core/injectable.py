@@ -6,9 +6,9 @@ def Injectable(injects: list = None):
 
         setattr(
             Ctor,
-            Types.meta,
+            Types.META,
             dict(
-                type=Types.injectable,
+                type=Types.INJECTABLE,
                 injects=injects if type(injects) is list else []
             )
         )

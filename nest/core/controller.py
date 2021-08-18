@@ -6,9 +6,9 @@ def Controller(prefix: str = None, injects: list = None):
 
         setattr(
             Ctor,
-            Types.meta,
+            Types.META,
             dict(
-                type=Types.controller,
+                type=Types.CONTROLLER,
                 prefix=prefix if type(prefix) is str else '',
                 injects=injects if type(injects) is list else [],
             )

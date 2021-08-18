@@ -6,9 +6,9 @@ def NestModule(prefix: str = None, modules: list = None, providers: list = None,
 
         setattr(
             Ctor,
-            Types.meta,
+            Types.META,
             dict(
-                type=Types.module,
+                type=Types.MODULE,
                 prefix=prefix if type(prefix) is str else '',
                 modules=modules if type(modules) is list else [],
                 providers=providers if type(providers) is list else [],

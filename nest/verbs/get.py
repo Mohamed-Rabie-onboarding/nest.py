@@ -4,18 +4,15 @@ from nest.scripts.types import Types
 def Get(uri: str = None):
     def _get(fn):
 
-        def NEST_Get(*args, **kwargs):
-            return fn(*args, **kwargs)
-
         setattr(
-            NEST_Get,
-            Types.meta,
+            fn,
+            Types.META,
             dict(
-                type=Types.get,
+                type=Types.GET,
                 route=fn,
                 uri=uri if uri is str else '/'
             )
         )
 
-        return NEST_Get
+        return fn
     return _get
