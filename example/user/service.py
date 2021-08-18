@@ -5,13 +5,13 @@ from .model import UserModel
 
 @Injectable()
 class UserService:
-    users: List[UserModel] = []
+    users: List[UserModel] = [
+        UserModel(0, 'Mohamed'),
+        UserModel(1, 'Mohamed'),
+        UserModel(2, 'Mohamed'),
+        UserModel(3, 'Mohamed'),
+        UserModel(4, 'Mohamed'),
+    ]
 
     def get_users(self):
-        return self.users
-
-    def add_user(self, user: UserModel):
-        self.users.append(user)
-
-    def remove_user(self, user: UserModel):
-        self.users.remove(user)
+        return [user.to_dict() for user in self.users]
