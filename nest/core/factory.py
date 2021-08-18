@@ -37,17 +37,6 @@ class NestFactory:
         NestFactory.resolve_providers(providers)
 
         """
-        Resolve all children modules
-        """
-        apps = [NestFactory.resolve_module(module) for module in modules]
-        for app in apps:
-            """
-            Issue:
-                mounting more than app in same prefix overriding each other
-            """
-            main_app.mount(prefix, app)
-
-        """
         Resolve all controllers
         """
         routes = [
@@ -60,6 +49,19 @@ class NestFactory:
                 callback = r['route']
 
                 main_app.route(path, method, callback)
+
+        """
+        Resolve all children modules
+        """
+        apps = [NestFactory.resolve_module(module) for module in modules]
+
+        if len(apps) > 0:
+            main_app_routes = Bottle()
+
+            for app in apps:
+                main_app_routes.merge(app)
+
+            main_app.mount(prefix, main_app_routes)
 
         return main_app
 
