@@ -41,6 +41,10 @@ class NestFactory:
         """
         apps = [NestFactory.resolve_module(module) for module in modules]
         for app in apps:
+            """
+            Issue:
+                mounting more than app in same prefix overriding each other
+            """
             main_app.mount(prefix, app)
 
         """
@@ -54,6 +58,7 @@ class NestFactory:
                 r = route[path]
                 method = r['method']
                 callback = r['route']
+
                 main_app.route(path, method, callback)
 
         return main_app
