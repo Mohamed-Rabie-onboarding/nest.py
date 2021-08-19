@@ -1,9 +1,9 @@
-from nest import *
+from nest import nest_module
 from .service import UserService
 from .controller import UserController
 
 
-@NestModule(
+@nest_module(
     prefix='/user',
     providers=[
         UserService

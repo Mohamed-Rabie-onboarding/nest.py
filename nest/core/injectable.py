@@ -1,7 +1,7 @@
 from nest.scripts import Types
 
 
-def Injectable(injects: list = None):
+def injectable(injects: list = None):
     def _injectable(Ctor):
 
         setattr(

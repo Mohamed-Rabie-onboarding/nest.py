@@ -1,9 +1,9 @@
-from nest import *
+from nest import nest_module
 from .service import CatsService
 from .controller import CatsController
 
 
-@NestModule(
+@nest_module(
     prefix="/cats",
     providers=[
         CatsService

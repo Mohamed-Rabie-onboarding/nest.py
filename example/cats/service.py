@@ -1,7 +1,7 @@
-from nest import *
+from nest import injectable
 
 
-@Injectable()
+@injectable()
 class CatsService:
     cats = [
         {"id": 0, "name": 'cat 0'},

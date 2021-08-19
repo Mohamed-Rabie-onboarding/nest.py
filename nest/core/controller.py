@@ -1,7 +1,7 @@
 from nest.scripts import Types
 
 
-def Controller(prefix: str = None, injects: list = None):
+def controller(prefix: str = None, injects: list = None):
     def _controller(Ctor):
 
         setattr(

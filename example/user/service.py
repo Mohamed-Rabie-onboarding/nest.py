@@ -1,11 +1,10 @@
-from nest import *
-from typing import List
+from nest import injectable
 from .model import UserModel
 
 
-@Injectable()
+@injectable()
 class UserService:
-    users: List[UserModel] = [
+    users = [
         UserModel(0, 'Mohamed'),
         UserModel(1, 'Mohamed'),
         UserModel(2, 'Mohamed'),

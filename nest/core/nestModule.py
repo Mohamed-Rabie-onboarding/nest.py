@@ -1,7 +1,7 @@
 from nest.scripts import Types
 
 
-def NestModule(prefix: str = None, modules: list = None, providers: list = None, controllers: list = None):
+def nest_module(prefix: str = None, modules: list = None, providers: list = None, controllers: list = None):
     def _nestModule(Ctor):
 
         setattr(

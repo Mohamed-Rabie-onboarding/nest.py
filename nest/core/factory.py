@@ -1,13 +1,9 @@
-from nest.verbs import type_to_verb
+from nest.verbs.type_to_verb import type_to_verb
 from nest.scripts import Types
-from bottle import Bottle, request, response
+from bottle import Bottle
 
 
 class NestFactory:
-
-    """
-    Should change this way 100%
-    """
 
     def __init__(self, appModule):
         self.SERVICES_CONTAINER = {}

@@ -1,5 +1,5 @@
 from nest import NestFactory
-from example.app.module import AppModule
+from example.app_module import AppModule
 
 
 def main():
