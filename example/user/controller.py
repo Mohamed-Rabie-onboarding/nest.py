@@ -16,7 +16,7 @@ class UserController:
         self.userService = userService
 
     @Get()
-    def get_users_handler(self):
+    def get_users_handler(self, req, res):
         return dict(
             users=self.userService.get_users()
         )

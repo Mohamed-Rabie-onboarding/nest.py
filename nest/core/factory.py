@@ -1,6 +1,6 @@
 from nest.verbs import type_to_verb
 from nest.scripts import Types
-from bottle import Bottle
+from bottle import Bottle, request, response
 
 
 class NestFactory:
@@ -8,15 +8,24 @@ class NestFactory:
     """
     Should change this way 100%
     """
-    SERVICES_CONTAINER = dict()
+
+    def __init__(self, appModule):
+        self.SERVICES_CONTAINER = {}
+        self.app = self.resolve_module(appModule)
 
     @staticmethod
     def create(appModule):
-        app = NestFactory.resolve_module(appModule)
-        return app
+        factory = NestFactory(appModule)
+        return factory.app
 
     @staticmethod
-    def resolve_module(module):
+    def create_callback(fn):
+        def _callback(*args, **kwargs):
+            # can add req, req here
+            return fn(*args, **kwargs)
+        return _callback
+
+    def resolve_module(self, module):
         meta = getattr(module, Types.META)
         assert meta['type'] == Types.MODULE
 
@@ -34,26 +43,27 @@ class NestFactory:
         """
         Resolve all services
         """
-        NestFactory.resolve_providers(providers)
+        self.resolve_providers(providers)
 
         """
         Resolve all controllers
         """
-        routes = [
-            NestFactory.resolve_controller(c, prefix) for c in controllers
-        ]
-        for route in routes:
-            for path in route:
-                r = route[path]
-                method = r['method']
-                callback = r['route']
 
-                main_app.route(path, method, callback)
+        routes = [self.resolve_controller(c) for c in controllers]
+        for route in routes:
+            for uri, methods in route.items():
+                for verb, callback in methods.items():
+
+                    main_app.route(
+                        prefix + uri,
+                        verb,
+                        NestFactory.create_callback(callback)
+                    )
 
         """
         Resolve all children modules
         """
-        apps = [NestFactory.resolve_module(module) for module in modules]
+        apps = [self.resolve_module(m) for m in modules]
 
         if len(apps) > 0:
             main_app_routes = Bottle()
@@ -65,32 +75,30 @@ class NestFactory:
 
         return main_app
 
-    @staticmethod
-    def resolve_providers(providers: list) -> None:
+    def resolve_providers(self, providers: list) -> None:
         services = []
 
         for injectable in providers:
-            if injectable in NestFactory.SERVICES_CONTAINER:
-                services.append(NestFactory.SERVICES_CONTAINER[injectable])
+            if injectable in self.SERVICES_CONTAINER:
+                services.append(self.SERVICES_CONTAINER[injectable])
                 continue
 
-            services.append(NestFactory.resolve_provider(injectable))
+            services.append(self.resolve_provider(injectable))
 
         return services
 
-    @staticmethod
-    def resolve_provider(Provider):
+    def resolve_provider(self, Provider):
         meta = getattr(Provider, Types.META)
         assert meta['type'] == Types.INJECTABLE
 
         injects = meta['injects']
-        service = Provider(*NestFactory.resolve_providers(injects))
-        NestFactory.SERVICES_CONTAINER[Provider] = service
+        service = Provider(*self.resolve_providers(injects))
+        self.SERVICES_CONTAINER[Provider] = service
 
         return service
 
-    @staticmethod
-    def resolve_controller(Controller, global_prefix=''):
+    # , global_prefix=''
+    def resolve_controller(self, Controller):
         meta = getattr(Controller, Types.META)
         assert meta['type'] == Types.CONTROLLER
 
@@ -99,9 +107,9 @@ class NestFactory:
         services = []
 
         for inject in injects:
-            if inject not in NestFactory.SERVICES_CONTAINER:
+            if inject not in self.SERVICES_CONTAINER:
                 raise Exception(f'Service `{inject.__class__}` not found.')
-            services.append(NestFactory.SERVICES_CONTAINER[inject])
+            services.append(self.SERVICES_CONTAINER[inject])
 
         controller = Controller(*services)
 
@@ -118,11 +126,18 @@ class NestFactory:
             fn = getattr(controller, r)
             if callable(fn) and hasattr(fn, Types.META):
                 route_meta = getattr(fn, Types.META)
-                method = type_to_verb(route_meta['type'])
 
-                routes[global_prefix + prefix] = dict(
-                    method=method,
-                    route=fn
-                )
+                route_type = route_meta['type']
+                method = type_to_verb(route_type)
+                uri = prefix + route_meta['uri']
 
+                if not uri in routes:
+                    routes[uri] = {}
+
+                if method in routes[uri]:
+                    raise Exception(
+                        'Can\'t Register multi routes with same method and uri.'
+                    )
+
+                routes[uri][method] = fn
         return routes
