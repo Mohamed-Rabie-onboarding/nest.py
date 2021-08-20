@@ -1,6 +1,7 @@
 from nest.verbs.type_to_verb import type_to_verb
 from nest.scripts import Types, AppContext
 from bottle import Bottle, request, response
+from inspect import signature
 
 
 class NestFactory:
@@ -17,18 +18,23 @@ class NestFactory:
     @staticmethod
     def create_callback(fn, ctx):
         def _callback(*args, **kwargs):
-            context = AppContext(
-                req=request,
-                res=response,
-                params=kwargs,
-                query=request.query,
-                ctx=ctx
-            )
 
-            try:
-                return fn(context)
-            except:
+            _len = len(signature(fn).parameters)
+            if _len == 1:
+                return fn(
+                    AppContext(
+                        req=request,
+                        res=response,
+                        params=kwargs,
+                        query=request.query,
+                        ctx=ctx
+                    )
+                )
+
+            if _len == 0:
                 return fn()
+
+            raise Exception(f'Excepted 0 or 1 parameters but found {_len}')
 
         return _callback
 

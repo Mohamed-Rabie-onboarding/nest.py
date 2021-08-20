@@ -8,7 +8,10 @@ from example.cats.module import CatsModule
     modules=[
         CatsModule,
         UserModule
-    ]
+    ],
+    ctx=dict(
+        hello=lambda: print('hello world from ctx')
+    )
 )
 class AppModule:
     pass
