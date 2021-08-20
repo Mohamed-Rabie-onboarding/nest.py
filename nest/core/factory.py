@@ -109,6 +109,9 @@ class NestFactory:
         return main_app
 
     def __resolve_providers(self, providers: list):
+        """
+        Docs Here!
+        """
         services = []
 
         for injectable in providers:
@@ -121,6 +124,9 @@ class NestFactory:
         return services
 
     def __resolve_provider(self, Provider):
+        """
+        Docs Here!
+        """
         meta = getattr(Provider, Types.META)
         assert meta['type'] == Types.INJECTABLE
 
@@ -130,8 +136,10 @@ class NestFactory:
 
         return service
 
-    # , global_prefix=''
     def __resolve_controller(self, Controller):
+        """
+        Docs Here!
+        """
         meta = getattr(Controller, Types.META)
         assert meta['type'] == Types.CONTROLLER
 
@@ -149,7 +157,6 @@ class NestFactory:
         """
         Extract each route from controller
         """
-        # routes = [r for r in controller.__dir__() if callable()]
         routes = {}
 
         for r in controller.__dir__():
@@ -176,6 +183,9 @@ class NestFactory:
         return routes
 
     def __resolve_error(self, error):
+        """
+        Docs Here!
+        """
         if error is None:
             return None
 
