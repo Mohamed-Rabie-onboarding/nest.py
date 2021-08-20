@@ -8,12 +8,21 @@ class NestFactory:
 
     def __init__(self, appModule):
         self.SERVICES_CONTAINER = {}
-        self.app = self.resolve_module(appModule)
+        self.app = self.__resolve_module(appModule)
+
+    def listen(
+        self, port=8080, reloader=False, debug=None, interval=1, server='wsgiref', host='127.0.0.1',
+            quiet=False, plugins=None, **kargs
+    ):
+        return self.app.run(
+            server=server, host=host, port=port, interval=interval, reloader=reloader,
+            quiet=quiet, plugins=plugins, debug=debug, **kargs
+        )
 
     @staticmethod
     def create(appModule):
         factory = NestFactory(appModule)
-        return factory.app
+        return factory
 
     @staticmethod
     def create_callback(fn, ctx):
@@ -38,7 +47,7 @@ class NestFactory:
 
         return _callback
 
-    def resolve_module(self, module, ctx=None):
+    def __resolve_module(self, module, ctx=None):
         meta = getattr(module, Types.META)
         assert meta['type'] == Types.MODULE
 
@@ -56,13 +65,13 @@ class NestFactory:
         """
         Resolve all services
         """
-        self.resolve_providers(providers)
+        self.__resolve_providers(providers)
 
         """
         Resolve all controllers
         """
 
-        routes = [self.resolve_controller(c) for c in controllers]
+        routes = [self.__resolve_controller(c) for c in controllers]
         for route in routes:
             for uri, methods in route.items():
                 for verb, callback in methods.items():
@@ -78,7 +87,7 @@ class NestFactory:
         """
         Resolve all children modules
         """
-        apps = [self.resolve_module(m, meta['ctx'] or ctx) for m in modules]
+        apps = [self.__resolve_module(m, meta['ctx'] or ctx) for m in modules]
 
         if len(apps) > 0:
             main_app_routes = Bottle()
@@ -90,7 +99,7 @@ class NestFactory:
 
         return main_app
 
-    def resolve_providers(self, providers: list) -> None:
+    def __resolve_providers(self, providers: list) -> None:
         services = []
 
         for injectable in providers:
@@ -98,22 +107,22 @@ class NestFactory:
                 services.append(self.SERVICES_CONTAINER[injectable])
                 continue
 
-            services.append(self.resolve_provider(injectable))
+            services.append(self.__resolve_provider(injectable))
 
         return services
 
-    def resolve_provider(self, Provider):
+    def __resolve_provider(self, Provider):
         meta = getattr(Provider, Types.META)
         assert meta['type'] == Types.INJECTABLE
 
         injects = meta['injects']
-        service = Provider(*self.resolve_providers(injects))
+        service = Provider(*self.__resolve_providers(injects))
         self.SERVICES_CONTAINER[Provider] = service
 
         return service
 
     # , global_prefix=''
-    def resolve_controller(self, Controller):
+    def __resolve_controller(self, Controller):
         meta = getattr(Controller, Types.META)
         assert meta['type'] == Types.CONTROLLER
 
