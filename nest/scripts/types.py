@@ -11,3 +11,4 @@ class Types:
     PUT =           prefix('PUT')
     PATCH =         prefix('PATCH')
     DELETE =        prefix('DELETE')
+    ERROR =         prefix('ERROR')

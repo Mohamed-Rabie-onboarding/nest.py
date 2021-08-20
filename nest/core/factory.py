@@ -1,5 +1,5 @@
 from nest.verbs.type_to_verb import type_to_verb
-from nest.scripts import Types, AppContext
+from nest.scripts import Types, AppContext, create_error_callback
 from bottle import Bottle, request, response
 from inspect import signature
 
@@ -47,7 +47,7 @@ class NestFactory:
 
         return _callback
 
-    def __resolve_module(self, module, ctx=None):
+    def __resolve_module(self, module, ctx=None, error_handler=None):
         meta = getattr(module, Types.META)
         assert meta['type'] == Types.MODULE
 
@@ -55,6 +55,8 @@ class NestFactory:
         modules = meta['modules']
         providers = meta['providers']
         controllers = meta['controllers']
+        error = meta['error']
+        context = meta['ctx'] or ctx
 
         """
         Created new Bottle app to mount resolved apps
@@ -80,17 +82,35 @@ class NestFactory:
                         prefix + uri,
                         verb,
                         NestFactory.create_callback(
-                            callback, meta['ctx'] or ctx
+                            callback, context
                         )
                     )
 
         """
+        Resolve error handlers
+        """
+        __error_handler = self.__resolve_error(error) or error_handler
+        _error_handler = {}
+
+        if __error_handler is not None:
+            for http_status, error_callback in __error_handler.items():
+                _error_handler[http_status] = create_error_callback(
+                    error_callback, context
+                )
+
+            main_app.error_handler = _error_handler
+
+        """
         Resolve all children modules
         """
-        apps = [self.__resolve_module(m, meta['ctx'] or ctx) for m in modules]
+        apps = [
+            self.__resolve_module(m, context, _error_handler)
+            for m in modules
+        ]
 
         if len(apps) > 0:
             main_app_routes = Bottle()
+            main_app_routes.error_handler = _error_handler
 
             for app in apps:
                 main_app_routes.merge(app)
@@ -165,3 +185,36 @@ class NestFactory:
 
                 routes[uri][method] = fn
         return routes
+
+    def __resolve_error(self, error):
+        if error is None:
+            return None
+
+        meta = getattr(error, Types.META)
+        injects = meta['injects']
+        services = []
+
+        for inject in injects:
+            if inject not in self.SERVICES_CONTAINER:
+                raise Exception(f'Service `{inject.__class__}` not found.')
+            services.append(self.SERVICES_CONTAINER[inject])
+
+        instance = error(*services)
+        error_handler = {}
+
+        for r in instance.__dir__():
+            if r.startswith('__'):
+                continue
+
+            fn = getattr(instance, r)
+            if callable(fn) and hasattr(fn, Types.META):
+                error_meta = getattr(fn, Types.META)
+                status = error_meta['status']
+
+                if status in error_handler:
+                    raise Exception(
+                        f'Cannot register multi error handlers with same status_code ({status})')
+
+                error_handler[status] = fn
+
+        return error_handler

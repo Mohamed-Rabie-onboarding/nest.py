@@ -1,6 +1,7 @@
 from nest import nest_module
 from example.user.module import UserModule
 from example.cats.module import CatsModule
+from .app_error import AppError
 
 
 @nest_module(
@@ -11,7 +12,8 @@ from example.cats.module import CatsModule
     ],
     ctx=dict(
         hello=lambda: print('hello world from ctx')
-    )
+    ),
+    error_handler=AppError
 )
 class AppModule:
     pass
