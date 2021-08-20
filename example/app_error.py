@@ -27,9 +27,6 @@ class AppError:
 
     @error(404)
     def error_404_handler(self, ctx: AppContext):
-        print('*' * 50)
-        print(ctx)
-        print('*' * 50)
         res = ctx.res
         res.set_header('content-type', 'application/json')
 

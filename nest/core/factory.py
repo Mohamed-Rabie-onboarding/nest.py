@@ -47,7 +47,7 @@ class NestFactory:
 
         return _callback
 
-    def __resolve_module(self, module, ctx=None, error_handler=None):
+    def __resolve_module(self, module, ctx=None, error_handler=None, parent_plugins=[]):
         meta = getattr(module, Types.META)
         assert meta['type'] == Types.MODULE
 
@@ -57,6 +57,7 @@ class NestFactory:
         controllers = meta['controllers']
         error = meta['error']
         context = meta['ctx'] or ctx
+        plugins = meta['plugins'] if meta['plugins'] else parent_plugins
 
         """
         Created new Bottle app to mount resolved apps
@@ -101,10 +102,16 @@ class NestFactory:
             main_app.error_handler = _error_handler
 
         """
+        Register plugins
+        """
+        for p in plugins:
+            main_app.install(p)
+
+        """
         Resolve all children modules
         """
         apps = [
-            self.__resolve_module(m, context, _error_handler)
+            self.__resolve_module(m, context, _error_handler, plugins)
             for m in modules
         ]
 
@@ -114,6 +121,9 @@ class NestFactory:
 
             for app in apps:
                 main_app_routes.merge(app)
+
+            for p in plugins:
+                main_app_routes.install(p)
 
             main_app.mount(prefix, main_app_routes)
 
