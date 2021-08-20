@@ -1,56 +1,70 @@
 from nest.verbs.type_to_verb import type_to_verb
-from nest.scripts import Types, AppContext, create_error_callback
-from bottle import Bottle, request, response
-from inspect import signature
+from nest.scripts import Types, register_app_routes, create_error_handlers, install_plugins, merge_apps
+from bottle import Bottle
 
 
 class NestFactory:
+    """
+    Docs Here!
+    """
+    @staticmethod
+    def create(appModule):
+        """
+        Docs Here!
+        """
+        factory = NestFactory(appModule)
+        return factory
 
-    def __init__(self, appModule):
+    def __init__(self, appModule) -> None:
+        """
+        Docs Here!
+        """
         self.SERVICES_CONTAINER = {}
         self.app = self.__resolve_module(appModule)
 
     def listen(
-        self, port=8080, reloader=False, debug=None, interval=1, server='wsgiref', host='127.0.0.1',
-            quiet=False, plugins=None, **kargs
-    ):
+        self,
+        port=8080,
+        reloader=False,
+        debug=None,
+        interval=1,
+        server='wsgiref',
+        host='127.0.0.1',
+        quiet=False,
+        plugins=None,
+        **kargs
+    ) -> None:
+        """
+        Docs Here!
+        """
         return self.app.run(
-            server=server, host=host, port=port, interval=interval, reloader=reloader,
-            quiet=quiet, plugins=plugins, debug=debug, **kargs
+            server=server,
+            host=host,
+            port=port,
+            interval=interval,
+            reloader=reloader,
+            quiet=quiet,
+            plugins=plugins,
+            debug=debug,
+            **kargs
         )
 
-    @staticmethod
-    def create(appModule):
-        factory = NestFactory(appModule)
-        return factory
+    def __resolve_module(
+        self,
+        module,
+        ctx=None,
+        error_handler=None,
+        parent_plugins=[]
+    ) -> Bottle:
+        """
+        Docs Here!
+        """
 
-    @staticmethod
-    def create_callback(fn, ctx):
-        def _callback(*args, **kwargs):
-
-            _len = len(signature(fn).parameters)
-            if _len == 1:
-                return fn(
-                    AppContext(
-                        req=request,
-                        res=response,
-                        params=kwargs,
-                        query=request.query,
-                        ctx=ctx
-                    )
-                )
-
-            if _len == 0:
-                return fn()
-
-            raise Exception(f'Excepted 0 or 1 parameters but found {_len}')
-
-        return _callback
-
-    def __resolve_module(self, module, ctx=None, error_handler=None, parent_plugins=[]):
+        # Check if the passed value is module with nest_meta
         meta = getattr(module, Types.META)
         assert meta['type'] == Types.MODULE
 
+        # Extract module meta
         prefix = meta['prefix']
         modules = meta['modules']
         providers = meta['providers']
@@ -59,77 +73,42 @@ class NestFactory:
         context = meta['ctx'] or ctx
         plugins = meta['plugins'] if meta['plugins'] else parent_plugins
 
-        """
-        Created new Bottle app to mount resolved apps
-        TODO: add Bottle app configs to module meta.
-        """
+        # Create a Bottle app for each module
         main_app = Bottle()
 
-        """
-        Resolve all services
-        """
+        # Register providers in self.SERVICES_CONTAINER
         self.__resolve_providers(providers)
 
-        """
-        Resolve all controllers
-        """
-
+        # Register each route after resolving them
         routes = [self.__resolve_controller(c) for c in controllers]
-        for route in routes:
-            for uri, methods in route.items():
-                for verb, callback in methods.items():
+        register_app_routes(prefix, main_app, routes, context)
 
-                    main_app.route(
-                        prefix + uri,
-                        verb,
-                        NestFactory.create_callback(
-                            callback, context
-                        )
-                    )
+        # Resolve error_handler and register it in main app
+        __errors = self.__resolve_error(error) or error_handler
+        _error_handler = create_error_handlers(__errors, context)
+        main_app.error_handler = _error_handler
 
-        """
-        Resolve error handlers
-        """
-        __error_handler = self.__resolve_error(error) or error_handler
-        _error_handler = {}
+        # Register plugins
+        install_plugins(main_app, plugins)
 
-        if __error_handler is not None:
-            for http_status, error_callback in __error_handler.items():
-                _error_handler[http_status] = create_error_callback(
-                    error_callback, context
-                )
-
-            main_app.error_handler = _error_handler
-
-        """
-        Register plugins
-        """
-        for p in plugins:
-            main_app.install(p)
-
-        """
-        Resolve all children modules
-        """
+        # Resolve all sub modules
         apps = [
             self.__resolve_module(m, context, _error_handler, plugins)
             for m in modules
         ]
 
+        # Checks if there is one app or more it creates a routes_app
+        # and merge every sub app into the routes_app so it gives the
+        # abillity to mount all apps in a single global prefix
         if len(apps) > 0:
-            main_app_routes = Bottle()
+            main_app_routes = merge_apps(apps)
             main_app_routes.error_handler = _error_handler
-
-            for app in apps:
-                main_app_routes.merge(app)
-
-            for p in plugins:
-                main_app_routes.install(p)
-
+            install_plugins(main_app_routes, plugins)
             main_app.mount(prefix, main_app_routes)
 
         return main_app
 
-    def __resolve_providers(self, providers: list) -> None:
+    def __resolve_providers(self, providers: list):
         services = []
 
         for injectable in providers:
