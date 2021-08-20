@@ -8,6 +8,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.8"
 bottle = "^0.12.19"
+pdoc3 = "^0.10.0"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.5.7"
