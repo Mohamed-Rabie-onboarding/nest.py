@@ -1,7 +1,7 @@
 from nest.scripts import Types
 
 
-def nest_module(prefix: str = None, modules: list = None, providers: list = None, controllers: list = None):
+def nest_module(prefix: str = None, modules: list = None, providers: list = None, controllers: list = None, ctx=None):
     def _nestModule(Ctor):
 
         setattr(
@@ -12,7 +12,8 @@ def nest_module(prefix: str = None, modules: list = None, providers: list = None
                 prefix=prefix if type(prefix) is str else '',
                 modules=modules if type(modules) is list else [],
                 providers=providers if type(providers) is list else [],
-                controllers=controllers if type(controllers) is list else []
+                controllers=controllers if type(controllers) is list else [],
+                ctx=ctx
             )
         )
 

@@ -1,4 +1,4 @@
-from nest import controller, get, post
+from nest import controller, get, post, AppContext
 from .service import CatsService
 
 
@@ -25,8 +25,8 @@ class CatsController:
         }
 
     @get('/<id:int>')
-    def get_cats_id_handler(self, id: int):
+    def get_cats_id_handler(self, ctx: AppContext):
         return {
-            'id': id,
+            'id': ctx.params['id'],
             'cats': self.catsService.get_cats()
         }

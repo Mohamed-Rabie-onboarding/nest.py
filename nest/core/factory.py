@@ -1,6 +1,6 @@
 from nest.verbs.type_to_verb import type_to_verb
-from nest.scripts import Types
-from bottle import Bottle
+from nest.scripts import Types, AppContext
+from bottle import Bottle, request, response
 
 
 class NestFactory:
@@ -15,13 +15,24 @@ class NestFactory:
         return factory.app
 
     @staticmethod
-    def create_callback(fn):
+    def create_callback(fn, ctx):
         def _callback(*args, **kwargs):
-            # can add req, req here
-            return fn(*args, **kwargs)
+            context = AppContext(
+                req=request,
+                res=response,
+                params=kwargs,
+                query=request.query,
+                ctx=ctx
+            )
+
+            try:
+                return fn(context)
+            except:
+                return fn()
+
         return _callback
 
-    def resolve_module(self, module):
+    def resolve_module(self, module, ctx=None):
         meta = getattr(module, Types.META)
         assert meta['type'] == Types.MODULE
 
@@ -53,13 +64,15 @@ class NestFactory:
                     main_app.route(
                         prefix + uri,
                         verb,
-                        NestFactory.create_callback(callback)
+                        NestFactory.create_callback(
+                            callback, meta['ctx'] or ctx
+                        )
                     )
 
         """
         Resolve all children modules
         """
-        apps = [self.resolve_module(m) for m in modules]
+        apps = [self.resolve_module(m, meta['ctx'] or ctx) for m in modules]
 
         if len(apps) > 0:
             main_app_routes = Bottle()
