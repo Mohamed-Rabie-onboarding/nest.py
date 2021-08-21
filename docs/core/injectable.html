@@ -33,6 +33,44 @@ __assert_list = assert_list(&#39;`injectable` decorator&#39;)
 
 
 def injectable(injects: list = None):
+    &#34;&#34;&#34;
+    Marks a class as a service.
+
+    Adding a meta attribute with service configs which allows to
+    initialize class correctly with the required options.
+
+    Parameters
+    ----------
+    injects : list
+        A list of required services that should be passed into the
+        controller should it can perform correctly.
+
+    Returns
+    -------
+    function(Ctor) -&gt; Ctor
+        Returns a function that takes a class and returns it after registering meta on it.
+
+    Examples
+    --------
+    &gt;&gt;&gt; @injectable(
+    &gt;&gt;&gt;     injects=[]
+    &gt;&gt;&gt; )
+    &gt;&gt;&gt; class UserService:
+    &gt;&gt;&gt;     users = []
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt;     def get_users(self):
+    &gt;&gt;&gt;         return self.users
+
+    See Also
+    --------
+    nest_error : 
+        Marks a class as an error_handler [More Info](/core/nest_error.html).
+    nest_module :
+        Marks a class as an module [More Info](/core/nest_module.html).
+    controller :
+        Marks a class as a controller [More Info](/core/controller.html).
+
+    &#34;&#34;&#34;
     __assert_list(injects, &#39;injects&#39;)
 
     def _injectable(Ctor):
@@ -60,12 +98,82 @@ def injectable(injects: list = None):
 <span>def <span class="ident">injectable</span></span>(<span>injects: list = None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Marks a class as a service.</p>
+<p>Adding a meta attribute with service configs which allows to
+initialize class correctly with the required options.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>injects</code></strong> :&ensp;<code>list</code></dt>
+<dd>A list of required services that should be passed into the
+controller should it can perform correctly.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>function(Ctor) -&gt; Ctor</code></dt>
+<dd>Returns a function that takes a class and returns it after registering meta on it.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; @injectable(
+&gt;&gt;&gt;     injects=[]
+&gt;&gt;&gt; )
+&gt;&gt;&gt; class UserService:
+&gt;&gt;&gt;     users = []
+&gt;&gt;&gt; 
+&gt;&gt;&gt;     def get_users(self):
+&gt;&gt;&gt;         return self.users
+</code></pre>
+<h2 id="see-also">See Also</h2>
+<dl>
+<dt><code>nest_error</code></dt>
+<dd>Marks a class as an error_handler <a href="/core/nest_error.html">More Info</a>.</dd>
+<dt><code>nest_module</code></dt>
+<dd>Marks a class as an module <a href="/core/nest_module.html">More Info</a>.</dd>
+<dt><code>controller</code></dt>
+<dd>Marks a class as a controller <a href="/core/controller.html">More Info</a>.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def injectable(injects: list = None):
+    &#34;&#34;&#34;
+    Marks a class as a service.
+
+    Adding a meta attribute with service configs which allows to
+    initialize class correctly with the required options.
+
+    Parameters
+    ----------
+    injects : list
+        A list of required services that should be passed into the
+        controller should it can perform correctly.
+
+    Returns
+    -------
+    function(Ctor) -&gt; Ctor
+        Returns a function that takes a class and returns it after registering meta on it.
+
+    Examples
+    --------
+    &gt;&gt;&gt; @injectable(
+    &gt;&gt;&gt;     injects=[]
+    &gt;&gt;&gt; )
+    &gt;&gt;&gt; class UserService:
+    &gt;&gt;&gt;     users = []
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt;     def get_users(self):
+    &gt;&gt;&gt;         return self.users
+
+    See Also
+    --------
+    nest_error : 
+        Marks a class as an error_handler [More Info](/core/nest_error.html).
+    nest_module :
+        Marks a class as an module [More Info](/core/nest_module.html).
+    controller :
+        Marks a class as a controller [More Info](/core/controller.html).
+
+    &#34;&#34;&#34;
     __assert_list(injects, &#39;injects&#39;)
 
     def _injectable(Ctor):

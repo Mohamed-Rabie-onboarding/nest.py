@@ -23,7 +23,7 @@ def controller(prefix: str = None, injects: list = None):
 
     Returns
     -------
-    Any
+    function(Ctor) -> Ctor
         Returns a function that takes a class and returns it after registering meta on it.
 
     Examples
@@ -41,13 +41,12 @@ def controller(prefix: str = None, injects: list = None):
 
     See Also
     --------
-    nest_error : 
-        Marks a class as an error_handler.
+    nest_error :  
+        Marks a class as an error_handler [More Info](/core/nest_error.html).
     nest_module :
-        Marks a class as an module (Aka. Bottle app).
+        Marks a class as an module  [More Info](/core/nest_module.html).
     injectable :
-        Marks a class as a service that can be injected later on controllers
-        or in other services.
+        Marks a class as a service  [More Info](/core/injectable.html).
 
     """
     __assert_str(prefix, 'prefix')

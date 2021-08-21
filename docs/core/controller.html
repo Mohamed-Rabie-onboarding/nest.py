@@ -51,8 +51,8 @@ def controller(prefix: str = None, injects: list = None):
 
     Returns
     -------
-    Any
-        Returns a function that takes a class and register meta on it.
+    function(Ctor) -&gt; Ctor
+        Returns a function that takes a class and returns it after registering meta on it.
 
     Examples
     --------
@@ -69,13 +69,12 @@ def controller(prefix: str = None, injects: list = None):
 
     See Also
     --------
-    nest_error : 
-        Marks a class as an error_handler.
+    nest_error :  
+        Marks a class as an error_handler [More Info](/core/nest_error.html).
     nest_module :
-        Marks a class as an module (Aka. Bottle app).
+        Marks a class as an module  [More Info](/core/nest_module.html).
     injectable :
-        Marks a class as a service that can be injected later on controllers
-        or in other services.
+        Marks a class as a service  [More Info](/core/injectable.html).
 
     &#34;&#34;&#34;
     __assert_str(prefix, &#39;prefix&#39;)
@@ -121,8 +120,8 @@ controller should it can perform correctly.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>Any</code></dt>
-<dd>Returns a function that takes a class and register meta on it.</dd>
+<dt><code>function(Ctor) -&gt; Ctor</code></dt>
+<dd>Returns a function that takes a class and returns it after registering meta on it.</dd>
 </dl>
 <h2 id="examples">Examples</h2>
 <pre><code class="language-python-repl">&gt;&gt;&gt; @controller({
@@ -139,11 +138,13 @@ controller should it can perform correctly.</dd>
 <h2 id="see-also">See Also</h2>
 <dl>
 <dt><code>nest_error</code></dt>
-<dd>Marks a class as an error_handler.</dd>
+<dd>Marks a class as an error_handler <a href="/core/nest_error.html">More Info</a>.</dd>
 <dt><code>nest_module</code></dt>
-<dd>Marks a class as an module (Aka. Bottle app).</dd>
+<dd>Marks a class as an module
+<a href="/core/nest_module.html">More Info</a>.</dd>
 <dt><code>injectable</code></dt>
-<dd>Marks a class as a service that can be injected later on controllers or in other services.</dd>
+<dd>Marks a class as a service
+<a href="/core/injectable.html">More Info</a>.</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -167,8 +168,8 @@ controller should it can perform correctly.</dd>
 
     Returns
     -------
-    Any
-        Returns a function that takes a class and register meta on it.
+    function(Ctor) -&gt; Ctor
+        Returns a function that takes a class and returns it after registering meta on it.
 
     Examples
     --------
@@ -185,13 +186,12 @@ controller should it can perform correctly.</dd>
 
     See Also
     --------
-    nest_error : 
-        Marks a class as an error_handler.
+    nest_error :  
+        Marks a class as an error_handler [More Info](/core/nest_error.html).
     nest_module :
-        Marks a class as an module (Aka. Bottle app).
+        Marks a class as an module  [More Info](/core/nest_module.html).
     injectable :
-        Marks a class as a service that can be injected later on controllers
-        or in other services.
+        Marks a class as a service  [More Info](/core/injectable.html).
 
     &#34;&#34;&#34;
     __assert_str(prefix, &#39;prefix&#39;)
