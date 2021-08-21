@@ -34,6 +34,50 @@ __assert_list = assert_list(&#39;`controller` decorator&#39;)
 
 
 def controller(prefix: str = None, injects: list = None):
+    &#34;&#34;&#34;
+    Marks a class as a controller.
+
+    Adding a meta attribute with controller configs which allows to
+    initialize class correctly with the required options also accepts
+    a prefix which will be used later with routes.
+
+    Parameters
+    ----------
+    prefix : str
+        A string that will be appended before each route&#39;s uri.
+    injects : list
+        A list of required services that should be passed into the
+        controller should it can perform correctly.
+
+    Returns
+    -------
+    Any
+        Returns a function that takes a class and register meta on it.
+
+    Examples
+    --------
+    &gt;&gt;&gt; @controller({
+    &gt;&gt;&gt;     prefix=&#39;/user&#39;,
+    &gt;&gt;&gt;     injects=[
+    &gt;&gt;&gt;         UserService
+    &gt;&gt;&gt;     ]
+    &gt;&gt;&gt; })
+    &gt;&gt;&gt; class UserController:
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt;     def __init__(self, userService: UserService):
+    &gt;&gt;&gt;         self.userService = userService
+
+    See Also
+    --------
+    nest_error : 
+        Marks a class as an error_handler.
+    nest_module :
+        Marks a class as an module (Aka. Bottle app).
+    injectable :
+        Marks a class as a service that can be injected later on controllers
+        or in other services.
+
+    &#34;&#34;&#34;
     __assert_str(prefix, &#39;prefix&#39;)
     __assert_list(injects, &#39;injects&#39;)
 
@@ -63,12 +107,93 @@ def controller(prefix: str = None, injects: list = None):
 <span>def <span class="ident">controller</span></span>(<span>prefix: str = None, injects: list = None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Marks a class as a controller.</p>
+<p>Adding a meta attribute with controller configs which allows to
+initialize class correctly with the required options also accepts
+a prefix which will be used later with routes.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>prefix</code></strong> :&ensp;<code>str</code></dt>
+<dd>A string that will be appended before each route's uri.</dd>
+<dt><strong><code>injects</code></strong> :&ensp;<code>list</code></dt>
+<dd>A list of required services that should be passed into the
+controller should it can perform correctly.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Any</code></dt>
+<dd>Returns a function that takes a class and register meta on it.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; @controller({
+&gt;&gt;&gt;     prefix='/user',
+&gt;&gt;&gt;     injects=[
+&gt;&gt;&gt;         UserService
+&gt;&gt;&gt;     ]
+&gt;&gt;&gt; })
+&gt;&gt;&gt; class UserController:
+&gt;&gt;&gt; 
+&gt;&gt;&gt;     def __init__(self, userService: UserService):
+&gt;&gt;&gt;         self.userService = userService
+</code></pre>
+<h2 id="see-also">See Also</h2>
+<dl>
+<dt><code>nest_error</code></dt>
+<dd>Marks a class as an error_handler.</dd>
+<dt><code>nest_module</code></dt>
+<dd>Marks a class as an module (Aka. Bottle app).</dd>
+<dt><code>injectable</code></dt>
+<dd>Marks a class as a service that can be injected later on controllers or in other services.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def controller(prefix: str = None, injects: list = None):
+    &#34;&#34;&#34;
+    Marks a class as a controller.
+
+    Adding a meta attribute with controller configs which allows to
+    initialize class correctly with the required options also accepts
+    a prefix which will be used later with routes.
+
+    Parameters
+    ----------
+    prefix : str
+        A string that will be appended before each route&#39;s uri.
+    injects : list
+        A list of required services that should be passed into the
+        controller should it can perform correctly.
+
+    Returns
+    -------
+    Any
+        Returns a function that takes a class and register meta on it.
+
+    Examples
+    --------
+    &gt;&gt;&gt; @controller({
+    &gt;&gt;&gt;     prefix=&#39;/user&#39;,
+    &gt;&gt;&gt;     injects=[
+    &gt;&gt;&gt;         UserService
+    &gt;&gt;&gt;     ]
+    &gt;&gt;&gt; })
+    &gt;&gt;&gt; class UserController:
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt;     def __init__(self, userService: UserService):
+    &gt;&gt;&gt;         self.userService = userService
+
+    See Also
+    --------
+    nest_error : 
+        Marks a class as an error_handler.
+    nest_module :
+        Marks a class as an module (Aka. Bottle app).
+    injectable :
+        Marks a class as a service that can be injected later on controllers
+        or in other services.
+
+    &#34;&#34;&#34;
     __assert_str(prefix, &#39;prefix&#39;)
     __assert_list(injects, &#39;injects&#39;)
 
