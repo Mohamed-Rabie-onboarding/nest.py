@@ -33,6 +33,66 @@ __assert_list = assert_list(&#39;`nest_error` decorator&#39;)
 
 
 def nest_error(injects: list = None):
+    &#34;&#34;&#34;
+    Marks a class as an error_handler.
+
+    Adding a meta attribute with service configs which allows to
+    initialize class correctly with the required options.
+
+    Parameters
+    ----------
+    injects : list
+        A list of required services that should be passed into the
+        controller should it can perform correctly.
+
+    Returns
+    -------
+    function(Ctor) -&gt; Ctor
+        Returns a function that takes a class and returns it after registering meta on it.
+
+    Examples
+    --------
+    &gt;&gt;&gt; @nest_error(
+    &gt;&gt;&gt;     injects=[]
+    &gt;&gt;&gt; )
+    &gt;&gt;&gt; class AppError:
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt;     @error(400)
+    &gt;&gt;&gt;     def error_400_handler(self, ctx: AppContext):
+    &gt;&gt;&gt;         res = ctx.res
+    &gt;&gt;&gt;         res.set_header(&#39;content-type&#39;, &#39;application/json&#39;)
+    &gt;&gt;&gt;         error = ctx.error # &lt;instance &#39;HTTPError&#39;&gt;
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt;         return {
+    &gt;&gt;&gt;             &#39;status&#39;: 400,
+    &gt;&gt;&gt;             &#39;message&#39;: &#39;Bad Request.&#39;
+    &gt;&gt;&gt;         }
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt;     @error(403)
+    &gt;&gt;&gt;     def error_403_handler(self):
+    &gt;&gt;&gt;         return dumps({
+    &gt;&gt;&gt;             &#39;status&#39;: 403,
+    &gt;&gt;&gt;             &#39;message&#39;: &#39;Forbidden.&#39;
+    &gt;&gt;&gt;         })
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt;     @error(404)
+    &gt;&gt;&gt;     def error_404_handler(self, ctx: AppContext):
+    &gt;&gt;&gt;         return dumps({
+    &gt;&gt;&gt;             &#39;status&#39;: 404,
+    &gt;&gt;&gt;             &#39;message&#39;: &#39;Page not found.&#39;
+    &gt;&gt;&gt;         })
+    &gt;&gt;&gt; 
+
+    See Also
+    --------
+    injectable : 
+        Marks a class as a service [More Info](/core/injectable.html).
+    nest_module :
+        Marks a class as an module [More Info](/core/nest_module.html).
+    controller :
+        Marks a class as a controller [More Info](/core/controller.html).
+
+    &#34;&#34;&#34;
     __assert_list(injects, &#39;injects&#39;)
 
     def _nest_error(Ctor):
@@ -61,12 +121,126 @@ def nest_error(injects: list = None):
 <span>def <span class="ident">nest_error</span></span>(<span>injects: list = None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Marks a class as an error_handler.</p>
+<p>Adding a meta attribute with service configs which allows to
+initialize class correctly with the required options.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>injects</code></strong> :&ensp;<code>list</code></dt>
+<dd>A list of required services that should be passed into the
+controller should it can perform correctly.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>function(Ctor) -&gt; Ctor</code></dt>
+<dd>Returns a function that takes a class and returns it after registering meta on it.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; @nest_error(
+&gt;&gt;&gt;     injects=[]
+&gt;&gt;&gt; )
+&gt;&gt;&gt; class AppError:
+&gt;&gt;&gt; 
+&gt;&gt;&gt;     @error(400)
+&gt;&gt;&gt;     def error_400_handler(self, ctx: AppContext):
+&gt;&gt;&gt;         res = ctx.res
+&gt;&gt;&gt;         res.set_header('content-type', 'application/json')
+&gt;&gt;&gt;         error = ctx.error # &lt;instance 'HTTPError'&gt;
+&gt;&gt;&gt; 
+&gt;&gt;&gt;         return {
+&gt;&gt;&gt;             'status': 400,
+&gt;&gt;&gt;             'message': 'Bad Request.'
+&gt;&gt;&gt;         }
+&gt;&gt;&gt; 
+&gt;&gt;&gt;     @error(403)
+&gt;&gt;&gt;     def error_403_handler(self):
+&gt;&gt;&gt;         return dumps({
+&gt;&gt;&gt;             'status': 403,
+&gt;&gt;&gt;             'message': 'Forbidden.'
+&gt;&gt;&gt;         })
+&gt;&gt;&gt; 
+&gt;&gt;&gt;     @error(404)
+&gt;&gt;&gt;     def error_404_handler(self, ctx: AppContext):
+&gt;&gt;&gt;         return dumps({
+&gt;&gt;&gt;             'status': 404,
+&gt;&gt;&gt;             'message': 'Page not found.'
+&gt;&gt;&gt;         })
+&gt;&gt;&gt; 
+</code></pre>
+<h2 id="see-also">See Also</h2>
+<dl>
+<dt><code>injectable</code></dt>
+<dd>Marks a class as a service <a href="/core/injectable.html">More Info</a>.</dd>
+<dt><code>nest_module</code></dt>
+<dd>Marks a class as an module <a href="/core/nest_module.html">More Info</a>.</dd>
+<dt><code>controller</code></dt>
+<dd>Marks a class as a controller <a href="/core/controller.html">More Info</a>.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def nest_error(injects: list = None):
+    &#34;&#34;&#34;
+    Marks a class as an error_handler.
+
+    Adding a meta attribute with service configs which allows to
+    initialize class correctly with the required options.
+
+    Parameters
+    ----------
+    injects : list
+        A list of required services that should be passed into the
+        controller should it can perform correctly.
+
+    Returns
+    -------
+    function(Ctor) -&gt; Ctor
+        Returns a function that takes a class and returns it after registering meta on it.
+
+    Examples
+    --------
+    &gt;&gt;&gt; @nest_error(
+    &gt;&gt;&gt;     injects=[]
+    &gt;&gt;&gt; )
+    &gt;&gt;&gt; class AppError:
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt;     @error(400)
+    &gt;&gt;&gt;     def error_400_handler(self, ctx: AppContext):
+    &gt;&gt;&gt;         res = ctx.res
+    &gt;&gt;&gt;         res.set_header(&#39;content-type&#39;, &#39;application/json&#39;)
+    &gt;&gt;&gt;         error = ctx.error # &lt;instance &#39;HTTPError&#39;&gt;
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt;         return {
+    &gt;&gt;&gt;             &#39;status&#39;: 400,
+    &gt;&gt;&gt;             &#39;message&#39;: &#39;Bad Request.&#39;
+    &gt;&gt;&gt;         }
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt;     @error(403)
+    &gt;&gt;&gt;     def error_403_handler(self):
+    &gt;&gt;&gt;         return dumps({
+    &gt;&gt;&gt;             &#39;status&#39;: 403,
+    &gt;&gt;&gt;             &#39;message&#39;: &#39;Forbidden.&#39;
+    &gt;&gt;&gt;         })
+    &gt;&gt;&gt; 
+    &gt;&gt;&gt;     @error(404)
+    &gt;&gt;&gt;     def error_404_handler(self, ctx: AppContext):
+    &gt;&gt;&gt;         return dumps({
+    &gt;&gt;&gt;             &#39;status&#39;: 404,
+    &gt;&gt;&gt;             &#39;message&#39;: &#39;Page not found.&#39;
+    &gt;&gt;&gt;         })
+    &gt;&gt;&gt; 
+
+    See Also
+    --------
+    injectable : 
+        Marks a class as a service [More Info](/core/injectable.html).
+    nest_module :
+        Marks a class as an module [More Info](/core/nest_module.html).
+    controller :
+        Marks a class as a controller [More Info](/core/controller.html).
+
+    &#34;&#34;&#34;
     __assert_list(injects, &#39;injects&#39;)
 
     def _nest_error(Ctor):
