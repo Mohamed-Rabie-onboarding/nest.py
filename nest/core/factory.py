@@ -19,8 +19,17 @@ class NestFactory:
         """
         Docs Here!
         """
+        self.app_module = appModule
         self.SERVICES_CONTAINER = {}
         self.app = self.__resolve_module(appModule)
+
+    def use(self, nest_plugin):
+        if nest_plugin is None:
+            raise TypeError(
+                f'`nest_plugin` cannot be of `None` type in `app.use` function'
+            )
+
+        return nest_plugin(self.app, self.app_module)
 
     def listen(
         self,
