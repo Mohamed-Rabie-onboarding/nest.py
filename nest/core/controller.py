@@ -44,7 +44,7 @@ def controller(prefix: str = None, injects: list = None):
     nest_error :  
         Marks a class as an error_handler [More Info](/core/nest_error.html).
     nest_module :
-        Marks a class as an module  [More Info](/core/nest_module.html).
+        Marks a class as a module  [More Info](/core/nest_module.html).
     injectable :
         Marks a class as a service  [More Info](/core/injectable.html).
 

@@ -60,7 +60,7 @@ def nest_error(injects: list = None):
     injectable : 
         Marks a class as a service [More Info](/core/injectable.html).
     nest_module :
-        Marks a class as an module [More Info](/core/nest_module.html).
+        Marks a class as a module [More Info](/core/nest_module.html).
     controller :
         Marks a class as a controller [More Info](/core/controller.html).
 
