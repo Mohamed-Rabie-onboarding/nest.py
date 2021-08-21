@@ -42,6 +42,71 @@ def nest_module(
     error_handler=None,
     plugins: list = None
 ):
+    &#34;&#34;&#34;
+    Marks a class as a module.
+
+    Adding a meta attribute with that required to create a `Bottle` app
+    and config it correctly.
+
+    Parameters
+    ----------
+    prefix : str
+        A global prefix that added into its `sub modules`.
+    modules : list
+        The sub modules of that `nest_module` which inherit its prefix, 
+        providers, plugins, error_handler and ctx.
+    providers : list
+        The injectable service that will be used to initialize 
+        controllers correctly.
+    ctx : Any
+        Any data including str, dict, class, object, etc...
+        passed around the application in every single `route` or `error` call.
+        Can be override by passing a new context in a `sub module`.
+    error_handler : Any
+        A class that have to be marked with `@nest_error()`; used as an error handler
+        for the entire app.
+        Can be override by passing new `error_handler` in any of `sub modules`
+    plugins : list
+        A plugin is just a `function(configs) -&gt; function(Ctor) -&gt; Ctor`; A function that
+        takes in some configs and returns back a function which gets a Ctor and registering
+        some meta or patching Ctor and returning it back.
+
+    Returns
+    -------
+    function(Ctor) -&gt; Ctor
+        Returns a function that takes a class and returns it after registering meta on it.
+
+    Examples
+    --------
+    &gt;&gt;&gt; @nest_module(
+    &gt;&gt;&gt;     prefix=&#39;/api/v1&#39;,
+    &gt;&gt;&gt;     modules=[
+    &gt;&gt;&gt;         CatsModule,
+    &gt;&gt;&gt;         UserModule
+    &gt;&gt;&gt;     ],
+    &gt;&gt;&gt;     ctx=dict(
+    &gt;&gt;&gt;         hello=lambda: print(&#39;hello world from ctx&#39;)
+    &gt;&gt;&gt;     ),
+    &gt;&gt;&gt;     error_handler=AppError,
+    &gt;&gt;&gt;     plugins=[
+    &gt;&gt;&gt;         # The most simple plugin just returing the cb.
+    &gt;&gt;&gt;         lambda cb: lambda *args, **kwargs: cb(*args, **kwargs)
+    &gt;&gt;&gt;     ]
+    &gt;&gt;&gt; )
+    &gt;&gt;&gt; class AppModule:
+    &gt;&gt;&gt;     pass
+    &gt;&gt;&gt; 
+
+    See Also
+    --------
+    injectable : 
+        Marks a class as a service [More Info](/core/injectable.html).
+    nest_error : 
+        Marks a class as an error_handler [More Info](/core/nest_error.html).
+    controller :
+        Marks a class as a controller [More Info](/core/controller.html).
+
+    &#34;&#34;&#34;
     __assert_str(prefix, &#39;prefix&#39;)
     __assert_list(modules, &#39;modules&#39;)
     __assert_list(providers, &#39;providers&#39;)
@@ -80,7 +145,66 @@ def nest_module(
 <span>def <span class="ident">nest_module</span></span>(<span>prefix: str = None, modules: list = None, providers: list = None, controllers: list = None, ctx=None, error_handler=None, plugins: list = None)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Marks a class as a module.</p>
+<p>Adding a meta attribute with that required to create a <code>Bottle</code> app
+and config it correctly.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>prefix</code></strong> :&ensp;<code>str</code></dt>
+<dd>A global prefix that added into its <code>sub modules</code>.</dd>
+<dt><strong><code>modules</code></strong> :&ensp;<code>list</code></dt>
+<dd>The sub modules of that <code><a title="nest.core.nest_module.nest_module" href="#nest.core.nest_module.nest_module">nest_module()</a></code> which inherit its prefix,
+providers, plugins, error_handler and ctx.</dd>
+<dt><strong><code>providers</code></strong> :&ensp;<code>list</code></dt>
+<dd>The injectable service that will be used to initialize
+controllers correctly.</dd>
+<dt><strong><code>ctx</code></strong> :&ensp;<code>Any</code></dt>
+<dd>Any data including str, dict, class, object, etc&hellip;
+passed around the application in every single <code>route</code> or <code>error</code> call.
+Can be override by passing a new context in a <code>sub module</code>.</dd>
+<dt><strong><code>error_handler</code></strong> :&ensp;<code>Any</code></dt>
+<dd>A class that have to be marked with <code>@nest_error()</code>; used as an error handler
+for the entire app.
+Can be override by passing new <code>error_handler</code> in any of <code>sub modules</code></dd>
+<dt><strong><code>plugins</code></strong> :&ensp;<code>list</code></dt>
+<dd>A plugin is just a <code>function(configs) -&gt; function(Ctor) -&gt; Ctor</code>; A function that
+takes in some configs and returns back a function which gets a Ctor and registering
+some meta or patching Ctor and returning it back.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>function(Ctor) -&gt; Ctor</code></dt>
+<dd>Returns a function that takes a class and returns it after registering meta on it.</dd>
+</dl>
+<h2 id="examples">Examples</h2>
+<pre><code class="language-python-repl">&gt;&gt;&gt; @nest_module(
+&gt;&gt;&gt;     prefix='/api/v1',
+&gt;&gt;&gt;     modules=[
+&gt;&gt;&gt;         CatsModule,
+&gt;&gt;&gt;         UserModule
+&gt;&gt;&gt;     ],
+&gt;&gt;&gt;     ctx=dict(
+&gt;&gt;&gt;         hello=lambda: print('hello world from ctx')
+&gt;&gt;&gt;     ),
+&gt;&gt;&gt;     error_handler=AppError,
+&gt;&gt;&gt;     plugins=[
+&gt;&gt;&gt;         # The most simple plugin just returing the cb.
+&gt;&gt;&gt;         lambda cb: lambda *args, **kwargs: cb(*args, **kwargs)
+&gt;&gt;&gt;     ]
+&gt;&gt;&gt; )
+&gt;&gt;&gt; class AppModule:
+&gt;&gt;&gt;     pass
+&gt;&gt;&gt; 
+</code></pre>
+<h2 id="see-also">See Also</h2>
+<dl>
+<dt><code>injectable</code></dt>
+<dd>Marks a class as a service <a href="/core/injectable.html">More Info</a>.</dd>
+<dt><code>nest_error</code></dt>
+<dd>Marks a class as an error_handler <a href="/core/nest_error.html">More Info</a>.</dd>
+<dt><code>controller</code></dt>
+<dd>Marks a class as a controller <a href="/core/controller.html">More Info</a>.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -94,6 +218,71 @@ def nest_module(
     error_handler=None,
     plugins: list = None
 ):
+    &#34;&#34;&#34;
+    Marks a class as a module.
+
+    Adding a meta attribute with that required to create a `Bottle` app
+    and config it correctly.
+
+    Parameters
+    ----------
+    prefix : str
+        A global prefix that added into its `sub modules`.
+    modules : list
+        The sub modules of that `nest_module` which inherit its prefix, 
+        providers, plugins, error_handler and ctx.
+    providers : list
+        The injectable service that will be used to initialize 
+        controllers correctly.
+    ctx : Any
+        Any data including str, dict, class, object, etc...
+        passed around the application in every single `route` or `error` call.
+        Can be override by passing a new context in a `sub module`.
+    error_handler : Any
+        A class that have to be marked with `@nest_error()`; used as an error handler
+        for the entire app.
+        Can be override by passing new `error_handler` in any of `sub modules`
+    plugins : list
+        A plugin is just a `function(configs) -&gt; function(Ctor) -&gt; Ctor`; A function that
+        takes in some configs and returns back a function which gets a Ctor and registering
+        some meta or patching Ctor and returning it back.
+
+    Returns
+    -------
+    function(Ctor) -&gt; Ctor
+        Returns a function that takes a class and returns it after registering meta on it.
+
+    Examples
+    --------
+    &gt;&gt;&gt; @nest_module(
+    &gt;&gt;&gt;     prefix=&#39;/api/v1&#39;,
+    &gt;&gt;&gt;     modules=[
+    &gt;&gt;&gt;         CatsModule,
+    &gt;&gt;&gt;         UserModule
+    &gt;&gt;&gt;     ],
+    &gt;&gt;&gt;     ctx=dict(
+    &gt;&gt;&gt;         hello=lambda: print(&#39;hello world from ctx&#39;)
+    &gt;&gt;&gt;     ),
+    &gt;&gt;&gt;     error_handler=AppError,
+    &gt;&gt;&gt;     plugins=[
+    &gt;&gt;&gt;         # The most simple plugin just returing the cb.
+    &gt;&gt;&gt;         lambda cb: lambda *args, **kwargs: cb(*args, **kwargs)
+    &gt;&gt;&gt;     ]
+    &gt;&gt;&gt; )
+    &gt;&gt;&gt; class AppModule:
+    &gt;&gt;&gt;     pass
+    &gt;&gt;&gt; 
+
+    See Also
+    --------
+    injectable : 
+        Marks a class as a service [More Info](/core/injectable.html).
+    nest_error : 
+        Marks a class as an error_handler [More Info](/core/nest_error.html).
+    controller :
+        Marks a class as a controller [More Info](/core/controller.html).
+
+    &#34;&#34;&#34;
     __assert_str(prefix, &#39;prefix&#39;)
     __assert_list(modules, &#39;modules&#39;)
     __assert_list(providers, &#39;providers&#39;)
