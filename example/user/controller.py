@@ -18,19 +18,10 @@ class UserController:
         tags=['User'],
         summary="Example User summary",
         description="Example user description",
-        responses={
-            '200': api_response(
-                description="its OK!",
-                schema='#User'
-            ),
-            '400': api_response(
-                description="Bad Reqest"
-            ),
-            "500": api_response(
-                description="Internal Server Error!"
-            )
-        }
     )
+    @api_response(200, 'its Ok!', 'User')
+    @api_response(400, 'Bad Request')
+    @api_response(500, 'Internal server error.')
     @get()
     def get_users_handler(self):
         return dict(
