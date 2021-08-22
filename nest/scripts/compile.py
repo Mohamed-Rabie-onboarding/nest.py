@@ -40,6 +40,7 @@ def __compile_controllers(Controller, services: dict) -> None:
         routes[r_uri][r_method] = route
     return {
         "uri": uri,
+        "controller": ctrl,
         "paths": routes
     }
 

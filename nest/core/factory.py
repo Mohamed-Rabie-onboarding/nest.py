@@ -13,6 +13,7 @@ class NestFactory:
         """
         Docs Here!
         """
+        print(compile(appModule))
         factory = NestFactory(appModule)
         return factory
 
@@ -20,7 +21,6 @@ class NestFactory:
         """
         Docs Here!
         """
-        print(compile(appModule))
         self.app_module = appModule
         self.SERVICES_CONTAINER = {}
         self.app = self.__resolve_module(appModule)
