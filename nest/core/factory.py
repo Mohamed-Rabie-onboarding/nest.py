@@ -1,5 +1,5 @@
 from nest.verbs.type_to_verb import type_to_verb
-from nest.scripts import Types, register_app_routes, create_error_handlers, install_plugins, merge_apps
+from nest.scripts import Types, register_app_routes, create_error_handlers, install_plugins, merge_apps, compile
 from bottle import Bottle
 
 
@@ -7,6 +7,7 @@ class NestFactory:
     """
     Docs Here!
     """
+
     @staticmethod
     def create(appModule):
         """
@@ -19,6 +20,7 @@ class NestFactory:
         """
         Docs Here!
         """
+        print(compile(appModule))
         self.app_module = appModule
         self.SERVICES_CONTAINER = {}
         self.app = self.__resolve_module(appModule)
