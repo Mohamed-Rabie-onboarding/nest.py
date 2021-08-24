@@ -23,10 +23,8 @@ class CatsController:
         }
 
     @post()
-    def add_cat_handler(self):
-        return {
-            'cats': self.catsService.get_cats()
-        }
+    def add_cat_handler(self, ctx: AppContext):
+        return self.catsService.add_cat(ctx.req.json['name'])
 
     @get('/<id:int>')
     def get_cats_id_handler(self, ctx: AppContext):

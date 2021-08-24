@@ -11,3 +11,11 @@ class CatsService:
 
     def get_cats(self):
         return self.cats
+
+    def add_cat(self, name):
+        cat = {
+            "id": len(self.cats),
+            "name": name
+        }
+        self.cats.append(cat)
+        return cat
