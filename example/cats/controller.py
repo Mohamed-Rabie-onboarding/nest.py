@@ -2,7 +2,7 @@ from nest import controller, get, post, AppContext
 from .service import CatsService
 
 # importing from Bottle for now
-from bottle import abort
+from bottle import HTTPError, abort
 
 
 @controller(
@@ -32,6 +32,9 @@ class CatsController:
 
         if id == 0:
             abort(403, 'No one can access cat of 0 cause its mine!!')
+
+        if id == 100:
+            raise HTTPError(404, 'Cat not found')
 
         return {
             'id': ctx.params['id'],

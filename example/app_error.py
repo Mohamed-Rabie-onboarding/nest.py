@@ -19,10 +19,11 @@ class AppError:
     def error_403_handler(self, ctx: AppContext):
         # res = ctx.res
         # res.set_header('content-type', 'application/json')
+        print(ctx.error.body)
 
         return dumps({
             'status': 403,
-            'message': 'Forbidden.'
+            'message': ctx.error.body
         })
 
     @error(404)
@@ -32,7 +33,7 @@ class AppError:
 
         return dumps({
             'status': 404,
-            'message': 'Page not found.'
+            'message': ctx.error.body
         })
 
     @error(500)
