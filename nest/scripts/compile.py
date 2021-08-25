@@ -2,6 +2,7 @@ from nest.verbs.type_to_verb import type_to_verb
 from nest.scripts.types import Types
 
 
+# X
 def compile(mo, services: dict = {}):
     uri, providers, ctrls, mos, error, ctx, plugins = __get_module_meta(mo)
     for provider in providers:
