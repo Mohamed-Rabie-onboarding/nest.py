@@ -36,6 +36,12 @@ class AppError:
             'message': ctx.error.body
         })
 
+    @error(405)
+    def error_405_handler(self):
+        return dumps({
+            'works?': 'yay!'
+        })
+
     @error(500)
     def error_500_handler(self, ctx: AppContext):
         res = ctx.res

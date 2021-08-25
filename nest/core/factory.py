@@ -5,227 +5,244 @@ from bottle import Bottle
 
 
 class NestFactory:
-    """
-    Docs Here!
-    """
+
+    def __init__(self, app: Bottle, AppModule, tree):
+        self.app = app
+        self.AppModule = AppModule
+        self.tree = tree
+
+    def listen(self, port: int = 3000):
+        return self.app.run(port=port)
 
     @staticmethod
     def create(AppModule):
-        """
-        Docs Here!
-        """
-        print(Internals.compile(AppModule))
-        factory = NestFactory(AppModule)
-        return factory
+        tree = Internals.compile(AppModule)
+        app = Internals.resolve(tree)
+        return NestFactory(app, AppModule, tree)
 
-    def __init__(self, appModule) -> None:
-        """
-        Docs Here!
-        """
-        self.app_module = appModule
-        self.SERVICES_CONTAINER = {}
-        self.app = self.__resolve_module(appModule)
+# class NestFactory:
+#     """
+#     Docs Here!
+#     """
 
-    def use(self, nest_plugin):
-        if nest_plugin is None:
-            raise TypeError(
-                f'`nest_plugin` cannot be of `None` type in `app.use` function'
-            )
+#     @staticmethod
+#     def create(AppModule):
+#         """
+#         Docs Here!
+#         """
+#         tree = Internals.compile(AppModule)
+#         print(Internals.resolve(tree))
+#         factory = NestFactory(AppModule)
+#         return factory
 
-        return nest_plugin(self.app, self.app_module)
+#     def __init__(self, appModule) -> None:
+#         """
+#         Docs Here!
+#         """
+#         self.app_module = appModule
+#         self.SERVICES_CONTAINER = {}
+#         self.app = self.__resolve_module(appModule)
 
-    def listen(
-        self,
-        port=8080,
-        reloader=False,
-        debug=None,
-        interval=1,
-        server='wsgiref',
-        host='127.0.0.1',
-        quiet=False,
-        plugins=None,
-        **kargs
-    ) -> None:
-        """
-        Docs Here!
-        """
-        return self.app.run(
-            server=server,
-            host=host,
-            port=port,
-            interval=interval,
-            reloader=reloader,
-            quiet=quiet,
-            plugins=plugins,
-            debug=debug,
-            **kargs
-        )
+#     def use(self, nest_plugin):
+#         if nest_plugin is None:
+#             raise TypeError(
+#                 f'`nest_plugin` cannot be of `None` type in `app.use` function'
+#             )
 
-    def __resolve_module(
-        self,
-        module,
-        ctx=None,
-        error_handler=None,
-        parent_plugins=[]
-    ) -> Bottle:
-        """
-        Docs Here!
-        """
+#         return nest_plugin(self.app, self.app_module)
 
-        # Check if the passed value is module with nest_meta
-        meta = getattr(module, Types.META)
-        assert meta['type'] == Types.MODULE
+#     def listen(
+#         self,
+#         port=8080,
+#         reloader=False,
+#         debug=None,
+#         interval=1,
+#         server='wsgiref',
+#         host='127.0.0.1',
+#         quiet=False,
+#         plugins=None,
+#         **kargs
+#     ) -> None:
+#         """
+#         Docs Here!
+#         """
+#         return self.app.run(
+#             server=server,
+#             host=host,
+#             port=port,
+#             interval=interval,
+#             reloader=reloader,
+#             quiet=quiet,
+#             plugins=plugins,
+#             debug=debug,
+#             **kargs
+#         )
 
-        # Extract module meta
-        prefix = meta['prefix']
-        modules = meta['modules']
-        providers = meta['providers']
-        controllers = meta['controllers']
-        error = meta['error']
-        context = meta['ctx'] or ctx
-        plugins = meta['plugins'] if meta['plugins'] else parent_plugins
+#     def __resolve_module(
+#         self,
+#         module,
+#         ctx=None,
+#         error_handler=None,
+#         parent_plugins=[]
+#     ) -> Bottle:
+#         """
+#         Docs Here!
+#         """
 
-        # Create a Bottle app for each module
-        main_app = Bottle()
+#         # Check if the passed value is module with nest_meta
+#         meta = getattr(module, Types.META)
+#         assert meta['type'] == Types.MODULE
 
-        # Register providers in self.SERVICES_CONTAINER
-        self.__resolve_providers(providers)
+#         # Extract module meta
+#         prefix = meta['prefix']
+#         modules = meta['modules']
+#         providers = meta['providers']
+#         controllers = meta['controllers']
+#         error = meta['error']
+#         context = meta['ctx'] or ctx
+#         plugins = meta['plugins'] if meta['plugins'] else parent_plugins
 
-        # Register each route after resolving them
-        routes = [self.__resolve_controller(c) for c in controllers]
-        register_app_routes(prefix, main_app, routes, context)
+#         # Create a Bottle app for each module
+#         main_app = Bottle()
 
-        # Resolve error_handler and register it in main app
-        __errors = self.__resolve_error(error) or error_handler
-        _error_handler = create_error_handlers(__errors, context)
-        main_app.error_handler = _error_handler
+#         # Register providers in self.SERVICES_CONTAINER
+#         self.__resolve_providers(providers)
 
-        # Register plugins
-        install_plugins(main_app, plugins)
+#         # Register each route after resolving them
+#         routes = [self.__resolve_controller(c) for c in controllers]
+#         register_app_routes(prefix, main_app, routes, context)
 
-        # Resolve all sub modules
-        apps = [
-            self.__resolve_module(m, context, _error_handler, plugins)
-            for m in modules
-        ]
+#         # Resolve error_handler and register it in main app
+#         __errors = self.__resolve_error(error) or error_handler
+#         _error_handler = create_error_handlers(__errors, context)
+#         main_app.error_handler = _error_handler
 
-        # Checks if there is one app or more it creates a routes_app
-        # and merge every sub app into the routes_app so it gives the
-        # abillity to mount all apps in a single global prefix
-        if len(apps) > 0:
-            main_app_routes = merge_apps(apps)
-            main_app_routes.error_handler = _error_handler
-            install_plugins(main_app_routes, plugins)
-            main_app.mount(prefix, main_app_routes)
+#         # Register plugins
+#         install_plugins(main_app, plugins)
 
-        return main_app
+#         # Resolve all sub modules
+#         apps = [
+#             self.__resolve_module(m, context, _error_handler, plugins)
+#             for m in modules
+#         ]
 
-    def __resolve_providers(self, providers: list):
-        """
-        Docs Here!
-        """
-        services = []
+#         # Checks if there is one app or more it creates a routes_app
+#         # and merge every sub app into the routes_app so it gives the
+#         # abillity to mount all apps in a single global prefix
+#         if len(apps) > 0:
+#             main_app_routes = merge_apps(apps)
+#             main_app_routes.error_handler = _error_handler
+#             install_plugins(main_app_routes, plugins)
+#             main_app.mount(prefix, main_app_routes)
 
-        for injectable in providers:
-            if injectable in self.SERVICES_CONTAINER:
-                services.append(self.SERVICES_CONTAINER[injectable])
-                continue
+#         return main_app
 
-            services.append(self.__resolve_provider(injectable))
+#     def __resolve_providers(self, providers: list):
+#         """
+#         Docs Here!
+#         """
+#         services = []
 
-        return services
+#         for injectable in providers:
+#             if injectable in self.SERVICES_CONTAINER:
+#                 services.append(self.SERVICES_CONTAINER[injectable])
+#                 continue
 
-    def __resolve_provider(self, Provider):
-        """
-        Docs Here!
-        """
-        meta = getattr(Provider, Types.META)
-        assert meta['type'] == Types.INJECTABLE
+#             services.append(self.__resolve_provider(injectable))
 
-        injects = meta['injects']
-        service = Provider(*self.__resolve_providers(injects))
-        self.SERVICES_CONTAINER[Provider] = service
+#         return services
 
-        return service
+#     def __resolve_provider(self, Provider):
+#         """
+#         Docs Here!
+#         """
+#         meta = getattr(Provider, Types.META)
+#         assert meta['type'] == Types.INJECTABLE
 
-    def __resolve_controller(self, Controller):
-        """
-        Docs Here!
-        """
-        meta = getattr(Controller, Types.META)
-        assert meta['type'] == Types.CONTROLLER
+#         injects = meta['injects']
+#         service = Provider(*self.__resolve_providers(injects))
+#         self.SERVICES_CONTAINER[Provider] = service
 
-        prefix = meta['prefix']
-        injects = meta['injects']
-        services = []
+#         return service
 
-        for inject in injects:
-            if inject not in self.SERVICES_CONTAINER:
-                raise Exception(f'Service `{inject.__class__}` not found.')
-            services.append(self.SERVICES_CONTAINER[inject])
+#     def __resolve_controller(self, Controller):
+#         """
+#         Docs Here!
+#         """
+#         meta = getattr(Controller, Types.META)
+#         assert meta['type'] == Types.CONTROLLER
 
-        controller = Controller(*services)
+#         prefix = meta['prefix']
+#         injects = meta['injects']
+#         services = []
 
-        """
-        Extract each route from controller
-        """
-        routes = {}
+#         for inject in injects:
+#             if inject not in self.SERVICES_CONTAINER:
+#                 raise Exception(f'Service `{inject.__class__}` not found.')
+#             services.append(self.SERVICES_CONTAINER[inject])
 
-        for r in controller.__dir__():
-            if r.startswith('__'):
-                continue
+#         controller = Controller(*services)
 
-            fn = getattr(controller, r)
-            if callable(fn) and hasattr(fn, Types.META):
-                route_meta = getattr(fn, Types.META)
+#         """
+#         Extract each route from controller
+#         """
+#         routes = {}
 
-                route_type = route_meta['type']
-                method = type_to_verb(route_type)
-                uri = prefix + route_meta['uri']
+#         for r in controller.__dir__():
+#             if r.startswith('__'):
+#                 continue
 
-                if not uri in routes:
-                    routes[uri] = {}
+#             fn = getattr(controller, r)
+#             if callable(fn) and hasattr(fn, Types.META):
+#                 route_meta = getattr(fn, Types.META)
 
-                if method in routes[uri]:
-                    raise Exception(
-                        'Can\'t Register multi routes with same method and uri.'
-                    )
+#                 route_type = route_meta['type']
+#                 method = type_to_verb(route_type)
+#                 uri = prefix + route_meta['uri']
 
-                routes[uri][method] = fn
-        return routes
+#                 if not uri in routes:
+#                     routes[uri] = {}
 
-    def __resolve_error(self, error):
-        """
-        Docs Here!
-        """
-        if error is None:
-            return None
+#                 if method in routes[uri]:
+#                     raise Exception(
+#                         'Can\'t Register multi routes with same method and uri.'
+#                     )
 
-        meta = getattr(error, Types.META)
-        injects = meta['injects']
-        services = []
+#                 routes[uri][method] = fn
+#         return routes
 
-        for inject in injects:
-            if inject not in self.SERVICES_CONTAINER:
-                raise Exception(f'Service `{inject.__class__}` not found.')
-            services.append(self.SERVICES_CONTAINER[inject])
+#     def __resolve_error(self, error):
+#         """
+#         Docs Here!
+#         """
+#         if error is None:
+#             return None
 
-        instance = error(*services)
-        error_handler = {}
+#         meta = getattr(error, Types.META)
+#         injects = meta['injects']
+#         services = []
 
-        for r in instance.__dir__():
-            if r.startswith('__'):
-                continue
+#         for inject in injects:
+#             if inject not in self.SERVICES_CONTAINER:
+#                 raise Exception(f'Service `{inject.__class__}` not found.')
+#             services.append(self.SERVICES_CONTAINER[inject])
 
-            fn = getattr(instance, r)
-            if callable(fn) and hasattr(fn, Types.META):
-                error_meta = getattr(fn, Types.META)
-                status = error_meta['status']
+#         instance = error(*services)
+#         error_handler = {}
 
-                if status in error_handler:
-                    raise Exception(
-                        f'Cannot register multi error handlers with same status_code ({status})')
+#         for r in instance.__dir__():
+#             if r.startswith('__'):
+#                 continue
 
-                error_handler[status] = fn
+#             fn = getattr(instance, r)
+#             if callable(fn) and hasattr(fn, Types.META):
+#                 error_meta = getattr(fn, Types.META)
+#                 status = error_meta['status']
 
-        return error_handler
+#                 if status in error_handler:
+#                     raise Exception(
+#                         f'Cannot register multi error handlers with same status_code ({status})')
+
+#                 error_handler[status] = fn
+
+#         return error_handler
