@@ -1,5 +1,6 @@
 from nest.verbs.type_to_verb import type_to_verb
-from nest.scripts import Types, register_app_routes, create_error_handlers, install_plugins, merge_apps, compile
+from nest.scripts import Types, register_app_routes, create_error_handlers, install_plugins, merge_apps
+from nest.internals import Internals
 from bottle import Bottle
 
 
@@ -9,12 +10,12 @@ class NestFactory:
     """
 
     @staticmethod
-    def create(appModule):
+    def create(AppModule):
         """
         Docs Here!
         """
-        print(compile(appModule))
-        factory = NestFactory(appModule)
+        print(Internals.compile(AppModule))
+        factory = NestFactory(AppModule)
         return factory
 
     def __init__(self, appModule) -> None:

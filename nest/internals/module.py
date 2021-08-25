@@ -18,7 +18,7 @@ class Module:
         return {
             "uri": uri,
             "services": services,
-            "modules": [compile(mo, services) for mo in modules],
+            "modules": [Module.compile(mo, services) for mo in modules],
             "controllers": [Controller.compile(ctrl, services) for ctrl in ctrls],
             "plugins": plugins,
             "ctx": ctx,
