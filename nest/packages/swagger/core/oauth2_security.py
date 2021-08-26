@@ -1,8 +1,4 @@
-class __Oauth2SecurityFlow:
-    implicit = "implicit"
-    password = "password"
-    application = "application"
-    accessCode = "accessCode"
+from typing import Tuple
 
 
 class Oauth2Security:
@@ -26,9 +22,16 @@ class Oauth2Security:
             **kwargs
         }
 
-    flow = __Oauth2SecurityFlow()
-
     @staticmethod
-    def scopes(**kwargs):
-        for key, value in kwargs.items():
-            print(key, value)
+    def scopes(*args: Tuple[Tuple[str, str]]):
+        configs = {}
+        for key, value in args:
+            configs[key] = value
+        return configs
+
+
+class Oauth2SecurityFlow:
+    implicit = "implicit"
+    password = "password"
+    application = "application"
+    accessCode = "accessCode"

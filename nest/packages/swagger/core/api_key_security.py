@@ -1,8 +1,3 @@
-class __ApiKeySecurityIn:
-    header = 'header'
-    query = 'query'
-
-
 class ApiKeySecurity:
 
     def __init__(self, key_in: str = None, name: str = None, description: str = None, **kwargs):
@@ -14,4 +9,7 @@ class ApiKeySecurity:
             **kwargs
         }
 
-    key_in = __ApiKeySecurityIn()
+
+class ApiKeySecurityIn:
+    header = 'header'
+    query = 'query'

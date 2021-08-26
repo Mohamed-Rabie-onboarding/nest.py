@@ -15,7 +15,7 @@ class SwaggerFactory:
         self,
         swagger: str = None,
         host: str = None,
-        basePath: str = None,
+        base_path: str = None,
         info: Info = None,
         tags: List[Tag] = None,
         schemes: List[str] = None,
@@ -25,7 +25,7 @@ class SwaggerFactory:
         self.configs = {
             'swagger': swagger,
             'host': host,
-            'basePath': basePath,
+            'basePath': base_path,
             'info': info.configs if isinstance(info, Info) else info,
             'tags': [tag.configs for tag in tags] if type(tags) is list else tags,
             'schemes': schemes,

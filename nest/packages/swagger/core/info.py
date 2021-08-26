@@ -5,7 +5,7 @@ class Info:
         title: str = None,
         version: str = None,
         description: str = None,
-        termsOfService: str = None,
+        terms_of_service: str = None,
         contact: dict = None,
         license: dict = None,
         **kwargs
@@ -14,7 +14,7 @@ class Info:
             'title': title,
             'version': version,
             'description': description,
-            'termsOfService': termsOfService,
+            'termsOfService': terms_of_service,
             'contact': contact,
             'license': license,
             **kwargs
