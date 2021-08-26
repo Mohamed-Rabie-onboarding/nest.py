@@ -1,5 +1,5 @@
-from nest.scripts import Types
-from nest.scripts import assert_list
+from nest.scripts.types import Types
+from nest.scripts.assert_type import assert_list
 
 __assert_list = assert_list('`injectable` decorator')
 

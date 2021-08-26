@@ -1,7 +1,6 @@
 from nest.scripts.app_context import AppContext
 from bottle import Bottle, request, response
-from nest.verbs.type_to_verb import type_to_verb
-from nest.scripts.types import Types
+from nest.scripts.types import Types, type_to_verb
 from inspect import signature
 
 

@@ -1,5 +1,5 @@
-from nest.scripts import Types
-from nest.scripts import assert_str, assert_list
+from nest.scripts.types import Types
+from nest.scripts.assert_type import assert_str, assert_list
 
 __assert_str = assert_str('`controller` decorator')
 __assert_list = assert_list('`controller` decorator')
