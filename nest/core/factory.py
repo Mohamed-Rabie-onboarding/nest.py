@@ -9,8 +9,8 @@ class NestFactory:
         self.AppModule = AppModule
         self.tree = tree
 
-    def listen(self, port: int = 3000):
-        return self.app.run(port=port)
+    def listen(self, port: int = 3000, **kwargs):
+        return self.app.run(port=port, **kwargs)
 
     @staticmethod
     def create(AppModule):
