@@ -22,8 +22,7 @@ def main():
                 url="http://www.apache.org/licenses/LICENSE-2.0.html"
             )
         ),
-        host='petstore.swagger.io',
-        base_path="/v2",
+        base_path="/api/v1",
         tags=[
             Tag(
                 name='pet',
@@ -46,7 +45,7 @@ def main():
                 )
             ),
         ],
-        schemes=['https', 'http'],
+        schemes=['http', 'https'],
         security_definitions=SecurityDefinitions(
             petstore_auth=Oauth2Security(
                 authorization_url="http://petstore.swagger.io/oauth/dialog",

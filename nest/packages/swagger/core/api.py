@@ -108,6 +108,7 @@ def api_parameter(
     param_in: str = None,
     description: str = None,
     required: bool = None,
+    example=None,
     schema: Union[Model, str] = None
 ):
     def _api_parameter(Ctor):
@@ -119,6 +120,9 @@ def api_parameter(
         assign_configs(param_in, 'in')
         assign_configs(required, 'required')
         assign_configs(__resolve_schema(schema), 'schema')
+
+        if schema is None and example is not None:
+            assign_configs(Model(example=example).configs, 'schema')
 
         if not hasattr(Ctor, Types.PARAMETERS):
             setattr(

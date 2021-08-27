@@ -15,3 +15,22 @@ class Types:
     EXTERNAL_DOCS =     prefix('EXTERNAL_DOCS')
     PARAMETERS =        prefix('PARAMETERS')
     RESPONSES =         prefix('RESPONSES')
+
+
+__TYPE_TO_KEY__ = dict()
+__TYPE_TO_KEY__[Types.SUMMARY] = 'summary'
+__TYPE_TO_KEY__[Types.TAGS] = 'tags'
+__TYPE_TO_KEY__[Types.SCHEMES] = 'schemes'
+__TYPE_TO_KEY__[Types.OPERATION_ID] = 'operationId'
+__TYPE_TO_KEY__[Types.CONSUMES] = 'consumes'
+__TYPE_TO_KEY__[Types.DEPRECATED] = 'deprecated'
+__TYPE_TO_KEY__[Types.DESCRIPTION] = 'description'
+__TYPE_TO_KEY__[Types.PRODUCES] = 'produces'
+__TYPE_TO_KEY__[Types.SECURITY] = 'security'
+__TYPE_TO_KEY__[Types.EXTERNAL_DOCS] = 'externalDocs'
+__TYPE_TO_KEY__[Types.PARAMETERS] = 'parameters'
+__TYPE_TO_KEY__[Types.RESPONSES] = 'responses'
+
+
+def type_to_key(t):
+    return __TYPE_TO_KEY__[t]
