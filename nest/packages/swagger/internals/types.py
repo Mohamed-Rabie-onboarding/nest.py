@@ -13,5 +13,5 @@ class Types:
     PRODUCES =          prefix('PRODUCES')
     SECURITY =          prefix('SECURITY')
     EXTERNAL_DOCS =     prefix('EXTERNAL_DOCS')
-    PARAMETER =         prefix('PARAMETER')
-    RESPONSE =          prefix('RESPONSE')
+    PARAMETERS =        prefix('PARAMETERS')
+    RESPONSES =         prefix('RESPONSES')

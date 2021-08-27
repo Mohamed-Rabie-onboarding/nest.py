@@ -1,6 +1,7 @@
 
-from typing import List, Tuple
-from nest.packages.swagger.internals import Types
+from nest.packages.swagger.core.definitions import Model, ModelType
+from typing import List, Tuple, Union
+from nest.packages.swagger.internals import Types, not_none_assign
 
 
 def __api_basic_prop(t: str):
@@ -55,19 +56,79 @@ TODO: define response & parameter
 """
 
 
+def __resolve_schema(schema):
+    if schema is None:
+        return None
+    if isinstance(schema, Model):
+        return schema.configs
+    if type(schema) is str:
+        if schema.endswith('[]'):
+            return {
+                'type': ModelType.array,
+                'items': {
+                    '$ref': f'#/definitions/{schema[:-2]}'
+                }
+            }
+        return {
+            '$ref': f'#/definitions/{schema}'
+        }
+    raise TypeError('Schema must be of type Model or str')
+
+
 def api_response(
     status: int = None,
     description: str = None,
-    schema: dict = None,
+    schema: Union[Model, str] = None,
     headers: dict = None,
-    examples: dict = None
+    examples: dict = None,
 ):
     def _api_response(Ctor):
+        if type(status) is not int:
+            raise TypeError('http_status must be provided!')
+        configs = {}
+        assign_configs = not_none_assign(configs)
+
+        assign_configs(description, 'description')
+        assign_configs(headers, 'headers')
+        assign_configs(examples, 'examples')
+        assign_configs(__resolve_schema(schema), 'schema')
+
+        if not hasattr(Ctor, Types.RESPONSES):
+            setattr(Ctor, Types.RESPONSES, {})
+
+        res = getattr(Ctor, Types.RESPONSES)
+        res[status] = configs
+
         return Ctor
     return _api_response
 
 
-def api_parameter():
+def api_parameter(
+    name: str = None,
+    param_in: str = None,
+    description: str = None,
+    required: bool = None,
+    schema: Union[Model, str] = None
+):
     def _api_parameter(Ctor):
+        configs = {}
+        assign_configs = not_none_assign(configs)
+
+        assign_configs(description, 'description')
+        assign_configs(name, 'name')
+        assign_configs(param_in, 'in')
+        assign_configs(required, 'required')
+        assign_configs(__resolve_schema(schema), 'schema')
+
+        if not hasattr(Ctor, Types.PARAMETERS):
+            setattr(
+                Ctor,
+                Types.PARAMETERS,
+                []
+            )
+
+        params: list = getattr(Ctor, Types.PARAMETERS)
+        params.append(configs)
+
         return Ctor
     return _api_parameter
