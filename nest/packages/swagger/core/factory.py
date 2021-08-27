@@ -3,6 +3,7 @@ from nest.core.factory import NestFactory
 from .info import Info
 from .tag import Tag
 from .security_definitions import SecurityDefinitions
+from .definitions import Definitions
 from bottle import template, static_file
 import os
 from json import dumps
@@ -20,7 +21,6 @@ class SwaggerFactory:
         factory.app.get(uri, callback=serve_index)
 
         def serve_static(filename: str):
-            print(filename)
             return static_file(filename, static)
         factory.app.get(uri + '/<filename>', callback=serve_static)
 
@@ -33,6 +33,7 @@ class SwaggerFactory:
         tags: List[Tag] = None,
         schemes: List[str] = None,
         security_definitions: SecurityDefinitions = None,
+        definitions: Definitions = None,
         **kwargs
     ):
         self.configs = {
@@ -43,7 +44,7 @@ class SwaggerFactory:
             'tags': [tag.configs for tag in tags] if type(tags) is list else tags,
             'schemes': schemes,
             'securityDefinitions': security_definitions.configs if isinstance(security_definitions, SecurityDefinitions) else security_definitions,
+            'definitions': definitions.configs if isinstance(definitions, Definitions) else definitions,
             'paths': '??',
-            'models': '??',
             **kwargs
         }

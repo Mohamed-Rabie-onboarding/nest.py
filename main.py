@@ -1,6 +1,6 @@
 from nest import NestFactory
 from example.app_module import AppModule
-from nest.packages.swagger import SwaggerFactory, Info, Tag, SecurityDefinitions, Oauth2Security, Oauth2SecurityFlow
+from nest.packages.swagger import SwaggerFactory, Info, Tag, SecurityDefinitions, Oauth2Security, Oauth2SecurityFlow, Definitions, Model, ModelType, ModelFormat
 
 
 def main():
@@ -55,6 +55,43 @@ def main():
                     ("write:pets", "modify pets in your account"),
                     ("read:pets", "read your pets")
                 )
+            )
+        ),
+        definitions=Definitions(
+            Order=Model(
+                model_type=ModelType.object,
+                properties=Model.properties(
+                    id=Model(
+                        model_type=ModelType.integer,
+                        format=ModelFormat.int64
+                    ),
+                    petId=Model(
+                        model_type=ModelType.integer,
+                        format=ModelFormat.int32
+                    ),
+                    quantity=Model(
+                        model_type=ModelType.integer,
+                        format=ModelFormat.int32
+                    ),
+                    shipDate=Model(
+                        model_type=ModelType.string,
+                        format=ModelFormat.date_time
+                    ),
+                    status=Model(
+                        model_type=ModelType.string,
+                        description='Order Status',
+                        enum=['placed', 'approved', 'delivered']
+                    ),
+                    complete=Model(
+                        model_type=ModelType.boolean,
+                        default=False
+                    )
+                ),
+                xml=Model.xml(
+                    name='Order'
+                ),
+                required=['id', 'petId', 'quantity',
+                          'shipDate', 'status', 'complete']
             )
         )
     )
