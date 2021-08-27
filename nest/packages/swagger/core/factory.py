@@ -3,13 +3,26 @@ from nest.core.factory import NestFactory
 from .info import Info
 from .tag import Tag
 from .security_definitions import SecurityDefinitions
+from bottle import template, static_file
+import os
+from json import dumps
 
 
 class SwaggerFactory:
 
     def setup(self, factory: NestFactory, uri: str = '/api/docs'):
-        # register here
-        pass
+        index = os.path.join(os.path.dirname(__file__), '..', 'ui')
+        static = os.path.join(index, 'static')
+
+        def serve_index():
+            spec = dumps(self.configs)
+            return template(index + '/index', uri=uri, spec=spec)
+        factory.app.get(uri, callback=serve_index)
+
+        def serve_static(filename: str):
+            print(filename)
+            return static_file(filename, static)
+        factory.app.get(uri + '/<filename>', callback=serve_static)
 
     def __init__(
         self,

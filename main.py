@@ -39,7 +39,7 @@ def main():
             ),
             Tag(
                 name='user',
-                description='Operations about user"',
+                description='Operations about user',
                 external_docs=Tag.external_docs(
                     description="Find out more about our store",
                     url="http://swagger.io",
@@ -61,7 +61,7 @@ def main():
 
     app = NestFactory.create(AppModule)
 
-    swagger.setup(app)
+    swagger.setup(app, '/docs')
     app.listen(3000)
 
 
