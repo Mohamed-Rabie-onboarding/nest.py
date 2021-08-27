@@ -62,11 +62,11 @@ class CatsController:
         ctx.res.status = 202
         return cat
 
-    @delete('/<id:int>')
     @api_tags(['Cat'])
     @api_summary('Deletes a cat if it exists.')
     @api_response(204, 'Cat was deleted.')
     @api_response(404, 'Cat was not found.')
+    @delete('/<id:int>')
     def delete_cat_handler(self, ctx: AppContext):
         cat = self.catsService.delete_cat(ctx.params['id'])
         if cat is None:
